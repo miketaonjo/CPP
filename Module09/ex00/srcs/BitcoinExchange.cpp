@@ -157,40 +157,30 @@ void BitcoinExchange::recupData(std::string file)
 	std::string line;
 	std::string date;
 	std::string value;
-	//std::map<std::string, float>::iterator it;
 	float rate;
 	char delimiter = ',';
 
-	try
+	ifs.open(file.c_str());
+	if (!ifs.is_open())
 	{
-		ifs.open(file.c_str());
-		if (!ifs.is_open())
+		throw std::ifstream::failure("Cannot open file");
+	}
+	while (std::getline(ifs, line))
+	{
+		std::istringstream iss(line);
+		if (std::getline(iss, date, delimiter) && std::getline(iss, value))
 		{
-			throw std::ifstream::failure("Cannot open file");
-		}
-		while (std::getline(ifs, line))
-		{
-			std::istringstream iss(line);
-			if (std::getline(iss, date, delimiter) && std::getline(iss, value))
+			if (checkValidDate(date) == 0 && checkValidRate(value))
 			{
-				if (checkValidDate(date) == 0 && checkValidRate(value))
-				{
-					std::istringstream iss2(value);
-					if (iss2 >> rate)
-						_data_bitcoin[date] = rate;
-				}
-				else 
-					continue;
+				std::istringstream iss2(value);
+				if (iss2 >> rate)
+					_data_bitcoin[date] = rate;
 			}
+			else 
+				continue;
 		}
-		ifs.close();
-	/*for (it = _data_bitcoin.begin(); it != _data_bitcoin.end(); it++)
-		std::cout << it->first << " " << it->second << std::endl;*/
 	}
-	catch (const std::ifstream::failure &e)
-	{
-		std::cout << "Error " << e.what() << std::endl;
-	}
+	ifs.close();
 }
 
 static bool only_letters(const std::string &str)
@@ -204,26 +194,6 @@ static bool only_letters(const std::string &str)
 	}
 	return (true);
 }
-
-
-// static bool checkDateFormat(const std::string &str)
-// {
-// 	std::string year;
-// 	std::string month;
-// 	std::string day;
-// 	char delimiter = '-';
-//
-// 	std::istringstream iss(str);
-// 	if (std::getline(iss, year, delimiter) && std::getline(iss, month, delimiter) && std::getline(iss, day))
-// 	{
-// 		int n1 = atoi(year.c_str());
-// 		int n2 = atoi(month.c_str());
-// 		int n3 = atoi(day.c_str());
-// 		if ((n1 < 0) || (n2 < 1 || n2 > 12) || (n3 < 1 || n3 > 31))
-// 				return (false);
-// 	}
-// 	return (true);
-// }
 
 void BitcoinExchange::checkValueFormat(const std::string &str, const std::string &date)
 {
@@ -295,54 +265,42 @@ void BitcoinExchange::checkLine(std::string file)
 	std::string value;
 	char delimiter = '|';
 
-	try
+	if (this->_data_bitcoin.empty())
+		throw std::logic_error ("Error: no database found");
+	infile.open(file.c_str());
+	if (!infile.is_open())
 	{
-		if (this->_data_bitcoin.empty())
-			throw std::logic_error ("Error: no database found");
-		infile.open(file.c_str());
-		if (!infile.is_open())
+		throw std::ifstream::failure("Cannot open file");
+	}
+	while (std::getline(infile, line))
+	{
+		int i = 0;
+		std::istringstream iss(line);
+		if (std::getline(iss, date, delimiter) && std::getline(iss, value))
 		{
-			throw std::ifstream::failure("Cannot open file");
-		}
-		while (std::getline(infile, line))
-		{
-			int i = 0;
-			std::istringstream iss(line);
-			if (std::getline(iss, date, delimiter) && std::getline(iss, value))
+			std::istringstream iss2(date);
+			if (iss2 >> date >> std::ws)
 			{
-				std::istringstream iss2(date);
-				if (iss2 >> date >> std::ws)
+				if (only_letters(date))
+					continue;
+				else if (checkValidDate(date) == 1 || only_digits(date) == false || date.size() != 10 || date[4] != '-' || date[7] != '-')
 				{
-					if (only_letters(date))
-						continue;
-					else if (checkValidDate(date) == 1 || only_digits(date) == false || date.size() != 10 || date[4] != '-' || date[7] != '-')
-					{
-						std::cout << "Error: invalid date format" << std::endl;
-						i = 1;
-					}
-					else if (checkValidDate(date) == 2)
-					{
-						std::cout << "Error : Bitcoin was created in 2009, no valid data can exist" << std::endl;;
-						i = 1;
-					}
-					// else if (checkDateFormat(date) == false)
-					// {
-					// 	std::cout << "Error: bad input => " << date << std::endl;
-					// 	i = 1;
-					// }
-					if (!date.empty() && i == 0)
-						checkValueFormat(value, date);
+					std::cout << "Error: invalid date format" << std::endl;
+					i = 1;
 				}
+				else if (checkValidDate(date) == 2)
+				{
+					std::cout << "Error : Bitcoin was created in 2009, no valid data can exist" << std::endl;;
+					i = 1;
+				}
+				if (!date.empty() && i == 0)
+					checkValueFormat(value, date);
 			}
-			else if (line[0] != '\0'/* && only_letters(date) == true*/)
-				std::cout << "Error: bad input => " << line << std::endl;
 		}
-		infile.close();
+		else if (line[0] != '\0')
+			std::cout << "Error: bad input => " << line << std::endl;
 	}
-	catch (const std::ifstream::failure &e)
-	{
-		std::cout << "Error " << e.what() << std::endl;
-	}
+	infile.close();
 }
 
 void BitcoinExchange::convertRate(std::string date, float value)
@@ -352,8 +310,6 @@ void BitcoinExchange::convertRate(std::string date, float value)
 
 	it = _data_bitcoin.lower_bound(date);
 
-	// if (it == _data_bitcoin.end())
-	// 	std::cout << "Error: date not found" << std::endl;
 	float bitcoin_rate = it->second;
 	if (it != _data_bitcoin.begin() && it->first != date)
 	{
