@@ -1,0 +1,20 @@
+#include "RPN.hpp"
+ 
+int main(int argc, char **argv)
+{
+	if (argc != 2)
+	{
+		std::cout << "Error: need one argument" << std::endl;
+		return (1);
+	}
+	try
+	{
+		RPN calcul;
+		calcul.checkInput(argv[1]);
+	}
+	catch (const std::exception &e)
+	{
+		std::cout << "Error : " << e.what() << std::endl;
+	}
+	return (0);
+}
