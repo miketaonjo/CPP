@@ -40,6 +40,25 @@ static bool checkSigns(std::string s)
 	return (false);
 }
 
+static bool checkFormat(std::string s)
+{
+	int count_nb = 0;
+	int signs = 0;
+
+	for (size_t i = 0; i < s.length(); i++)
+	{
+		if (isdigit(s[i]))
+			count_nb++;
+		if (count_nb == 1 && (s[i] == '/' || s[i] == '*' || s[i] == '-' || s[i] == '+'))
+		 	return (false);
+		else if (s[i] == '/' || s[i] == '*' || s[i] == '-' || s[i] == '+')
+			signs++;
+	}
+	if (signs != count_nb - 1)
+		return (false);
+	return (true);
+}
+
 void RPN::checkInput(std::string input)
 {
 	std::string cpy;
@@ -47,20 +66,24 @@ void RPN::checkInput(std::string input)
 	cpy.reserve(input.length());
 	cpy.assign(input);
 
-	if (!onlyDigits(cpy) || !checkSigns(input) || !isdigit(cpy[0]))
+	if (!onlyDigits(cpy) || !checkSigns(input) || !isdigit(cpy[0]) || !checkFormat(cpy))
 		throw std::logic_error("Incorrect RPN format");
 	for (size_t i = 0; i < cpy.length(); i++)
 	{
-		if (isdigit(cpy[i]) || cpy[i] == 32)
+		if ((isdigit(cpy[i]) && cpy[i + 1] == 32) || cpy[i] == 32)
 		{
 			int n = 0;
-			while (i < cpy.length() && isdigit(cpy[i]))
+			if (/*i < cpy.length() && */isdigit(cpy[i]))
 			{
 				n = n * 10 + (cpy[i] - 48);
-				i++;
+				//i++;
 				this->_stack.push(n);
 			}
 		}
+		else if ((isdigit(cpy[i]) && cpy[i + 1] != 32)
+				|| ((cpy[i] == '/' || cpy[i] == '*' || cpy[i] == '-' || cpy[i] == '+')
+				&& cpy[i + 1] != 32 && cpy[i + 1] != '\0'))
+			throw std::logic_error("Incorrect RPN format");
 		else if (cpy[i] == '/' || cpy[i] == '*' || cpy[i] == '-' || cpy[i] == '+')
 		{
 			int j = 0;
