@@ -1,6 +1,4 @@
 #include "RPN.hpp"
-#include <sstream>
-#include <stdexcept>
 
 RPN::RPN(void)
 {
@@ -52,7 +50,18 @@ static bool checkFormat(std::string s)
 		if (count_nb == 1 && (s[i] == '/' || s[i] == '*' || s[i] == '-' || s[i] == '+'))
 		 	return (false);
 		else if (s[i] == '/' || s[i] == '*' || s[i] == '-' || s[i] == '+')
-			signs++;
+		{
+			while ((s[i] == '/' || s[i] == '*' || s[i] == '-' || s[i] == '+') || s[i] == 32)
+			{
+				if (s[i] == '/' || s[i] == '*' || s[i] == '-' || s[i] == '+') 
+					signs++;
+				if (isdigit(s[i + 1]))
+					break;
+				i++;
+			}
+			if (signs != count_nb - 1)
+				return (false);
+		}
 	}
 	if (signs != count_nb - 1)
 		return (false);
@@ -73,10 +82,9 @@ void RPN::checkInput(std::string input)
 		if ((isdigit(cpy[i]) && cpy[i + 1] == 32) || cpy[i] == 32)
 		{
 			int n = 0;
-			if (/*i < cpy.length() && */isdigit(cpy[i]))
+			if (isdigit(cpy[i]))
 			{
 				n = n * 10 + (cpy[i] - 48);
-				//i++;
 				this->_stack.push(n);
 			}
 		}
@@ -121,53 +129,3 @@ void RPN::checkInput(std::string input)
 	//std::cout << this->_stack.size() << std::endl;
 	std::cout << this->_stack.top() << std::endl;
 }
-
-/*
-static bool checkDigits(std::string s)
-{
-    for (size_t i = 0; i < s.length(); i++)
-    {
-        if (!isdigit(s[i]))
-            continue;
-        if (s[i] < '0' || s[i] > '9')
-            return (false);
-		if (i != s.length() && isdigit(s[i]) && (s[i + 1] != 32 && s[i + 1] != '\0'))
-			return (false);
-	}
-    return (true);
-}
-
-// check pour connaître le nombre total de chiffre dans la string ?
-// static int countDigits(std::string s)
-// {
-// 	int count = 0;
-// 	for (std::string::iterator it = s.begin(); it != s.end(); ++it)
-// 	{
-// 		if (std::isdigit(*it))
-// 			++count;
-// 	}
-// 	return (count);
-// }
-
-static bool checkRPNFormat(std::string s)
-{
-	//int count = 0;
-
-	for (size_t i = 0; i < s.length(); i++)
-	{
-		// check pour n'avoir toujours que 2 chiffres max pour faire une opération ?
-		// if (isdigit(s[i]))
-		// 	count++;
-		// else if (!isdigit(s[i]) && s[i] != 32)
-		// 	count = 0;
-		// if (count > 2)
-		// 	return (false);
-		if (!isdigit(s[0]) || !isdigit(s[2]))
-			return (false);
-		if (i == (s.length() - 1) && isdigit(s[i]))
-			return (false);
-	}
-	return (true);
-}
-*/
-
