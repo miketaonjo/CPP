@@ -310,6 +310,11 @@ void BitcoinExchange::convertRate(std::string date, float value)
 
 	it = _data_bitcoin.lower_bound(date);
 
+	if (it == _data_bitcoin.begin() && (date.compare(date) - date.compare(it->first) > 0))
+	{
+		std::cout << "Error: date is prior than database" << std::endl;
+		return ;
+	}
 	float bitcoin_rate = it->second;
 	if (it != _data_bitcoin.begin() && it->first != date)
 	{
