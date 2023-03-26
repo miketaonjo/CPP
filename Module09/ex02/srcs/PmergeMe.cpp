@@ -157,9 +157,10 @@ void PmergeMe::sortingSequence(std::deque<int> &container)
 	startSort(container);
 	
 	struct timeval d2;
-  	gettimeofday(&d2, NULL);
-	long time = (d2.tv_sec - d1.tv_sec) * 1000000 + (d2.tv_usec - d1.tv_usec);
-	std::cout << "Time to process a range of " << container.size() << " elements with std::deque : " << time / 1000.0 << " us" << std::endl;
+  	if (gettimeofday(&d2, NULL) == -1)
+		throw std::runtime_error("Error gettimeofday");
+	double time = (d2.tv_sec - d1.tv_sec) * 1000.0 + (d2.tv_usec - d1.tv_usec) / 1000.0;
+	std::cout << "Time to process a range of " << container.size() << " elements with std::deque : " << time << " ms" << std::endl;
 }
 
 void PmergeMe::sortingSequence(std::vector<int> &container)
@@ -173,9 +174,10 @@ void PmergeMe::sortingSequence(std::vector<int> &container)
 	
 	printSequence(container, 'a');
 	struct timeval v2;
-  	gettimeofday(&v2, NULL);
-	long time = (v2.tv_sec - v1.tv_sec) * 1000000 + (v2.tv_usec - v1.tv_usec);
-	std::cout << "Time to process a range of " << container.size() << " elements with std::vector : " << time / 1000.0  << " us" << std::endl;
+  	if (gettimeofday(&v2, NULL) == -1)
+		throw std::runtime_error("Error gettimeofday");
+	double time = (v2.tv_sec - v1.tv_sec) * 1000.0 + (v2.tv_usec - v1.tv_usec) / 1000.0;
+	std::cout << "Time to process a range of " << container.size() << " elements with std::vector : " << time << " ms" << std::endl;
 }
 
 void PmergeMe::checkArgs(int argc, char **argv)
