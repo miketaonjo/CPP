@@ -42,12 +42,7 @@ Execution :
 ```
 The output must respect those following guidelines :
 
-• On the first line you must display an explicit text followed by the unsorted positive
-integer sequence.
-• On the second line you must display an explicit text followed by the sorted positive
-integer sequence.
-• On the third line you must display an explicit text indicating the time used by
-your algorithm by specifying the first container used to sort the positive integer
-sequence.
-• On the last line you must display an explicit text indicating the time used by
-your algorit
+• On the first line you must display an explicit text followed by the unsorted positive integer sequence.<br>
+• On the second line you must display an explicit text followed by the sorted positive integer sequence.<br>
+• On the third line you must display an explicit text indicating the time used by your algorithm by specifying the first container used to sort the positive integer sequence.<br>
+• On the last line you must display an explicit text indicating the time used by your algorithm by specifying the second container used to sort the positive integer sequence<br>
