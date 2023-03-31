@@ -1,6 +1,6 @@
 # Project name : CPP Module 00
 
-The first module of 42 school's C++ piscine is an introduction to C++ and Object-Oriented Programming. In these exercises, we learn the basics: namespaces, classes, construcors, initialization lists, destructors, public and private member and non-member variables and functions, static variables, the const keyword, strings, iomanip, std streams, etc.
+The first module of 42 school's C++ piscine is an introduction to C++ and Object-Oriented Programming. In these exercises, we learn the basics: namespaces, classes, constructors, initialization lists, destructors, public and private member and non-member variables and functions, static variables, the const keyword, strings, iomanip, std streams, etc.
 
 
 ## Ex00 - Megaphone

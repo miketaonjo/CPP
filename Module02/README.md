@@ -1,4 +1,4 @@
-# Project name : CPP Module 01
+# Project name : CPP Module 02
 
 The third module of the 42 c++ piscine explores the concepts of ad-hoc polymorphism, operator overloading and the Orthodox Canonical class form.
 

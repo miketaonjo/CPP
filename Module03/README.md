@@ -1,4 +1,4 @@
-# Project name : CPP Module 01
+# Project name : CPP Module 03
 
 This module of 42 school's C++ piscine explores issues of class inheritance.
 
